@@ -163,17 +163,24 @@ class _DemoShellState extends State<DemoShell>
                           const SizedBox(height: 16),
                           const Divider(),
                           const SizedBox(height: 8),
-                          ...List.generate(
-                            widget.pages.length,
-                            (index) => RadioListTile<int>(
-                              title: Text(widget.pages[index].title),
-                              value: index,
-                              groupValue: _selectedIndex,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  _selectPage(value);
-                                }
-                              },
+                          Flexible(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(
+                                  widget.pages.length,
+                                  (index) => RadioListTile<int>(
+                                    title: Text(widget.pages[index].title),
+                                    value: index,
+                                    groupValue: _selectedIndex,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        _selectPage(value);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -186,22 +193,26 @@ class _DemoShellState extends State<DemoShell>
         ],
       ),
 
-      // Floating action button
-      floatingActionButton: GestureDetector(
-        onTap: _toggleSelector,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: _isSelectorOpen ? 0 : 56,
-          height: _isSelectorOpen ? 0 : 56,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 200),
-            opacity: _isSelectorOpen ? 0.0 : 1.0,
-            child: FloatingActionButton(
-              onPressed: _toggleSelector,
-              backgroundColor:
-                  widget.fabColor ?? Colors.grey.withOpacity(0.7),
-              elevation: 4,
-              child: const Icon(Icons.layers, color: Colors.white),
+      // Floating action button with Semantics identifier for Maestro testing
+      floatingActionButton: Semantics(
+        identifier: 'fab_button',
+        button: true,
+        child: GestureDetector(
+          onTap: _toggleSelector,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: _isSelectorOpen ? 0 : 56,
+            height: _isSelectorOpen ? 0 : 56,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _isSelectorOpen ? 0.0 : 1.0,
+              child: FloatingActionButton(
+                onPressed: _toggleSelector,
+                backgroundColor:
+                    widget.fabColor ?? Colors.grey.withOpacity(0.7),
+                elevation: 4,
+                child: const Icon(Icons.layers, color: Colors.white),
+              ),
             ),
           ),
         ),
