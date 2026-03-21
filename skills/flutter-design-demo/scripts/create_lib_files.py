@@ -64,17 +64,31 @@ def create_main_dart(project_path: Path) -> None:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 create_lib_files.py <project_name>")
-        print("Example: python3 create_lib_files.py flutter_design_demo")
+        print("Usage: python3 create_lib_files.py <project_path>")
+        print("Examples:")
+        print("  python3 create_lib_files.py .          # Create in current directory")
+        print("  python3 create_lib_files.py flutter_demo # Create in flutter_demo subdirectory")
         sys.exit(1)
 
-    project_name = sys.argv[1]
-    project_path = Path.cwd() / project_name
+    project_path_arg = sys.argv[1]
+    
+    # Handle '.' for current directory or specific path
+    if project_path_arg == '.':
+        project_path = Path.cwd()
+    else:
+        project_path = Path.cwd() / project_path_arg
 
     if not project_path.exists():
-        print(f"Error: Project directory '{project_name}' not found in current directory.")
+        print(f"Error: Project directory '{project_path_arg}' not found.")
         print(f"Expected path: {project_path}")
-        print(f"Make sure to run 'flutter create --platforms=android,ios,macos,web {project_name}' first.")
+        print(f"Make sure to run 'flutter create --platforms=android,ios,macos,web .' first.")
+        sys.exit(1)
+
+    # Verify it's a Flutter project
+    pubspec = project_path / "pubspec.yaml"
+    if not pubspec.exists():
+        print(f"Error: No pubspec.yaml found in {project_path}")
+        print("This doesn't appear to be a Flutter project directory.")
         sys.exit(1)
 
     print(f"Creating Flutter demo files in: {project_path}")
@@ -97,8 +111,11 @@ def main():
     print("  - lib/main.dart")
     print()
     print("Next steps:")
-    print(f"  1. cd {project_name}")
-    print("  2. flutter run -d emulator-5554  # or -d macos, -d chrome")
+    if project_path_arg == '.':
+        print("  1. flutter run -d emulator-5554  # or -d macos, -d chrome")
+    else:
+        print(f"  1. cd {project_path_arg}")
+        print("  2. flutter run -d emulator-5554  # or -d macos, -d chrome")
     print("  3. Click the floating button to switch between demo pages")
 
 
